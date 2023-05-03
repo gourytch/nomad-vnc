@@ -1,0 +1,26 @@
+# docker-compose.yml
+version: '3.4'
+services:
+  nomad-vnc:
+    image: nomad-vnc
+    build:
+      context: ./nomad-vnc
+      dockerfile: Dockerfile
+      args:
+        - UserName=${UserName}
+        - Uid=${Uid}
+        - Gid=${Uid}
+        - VNCNumber=${VNCNumber}
+    user: ${UserName}
+    stdin_open: true
+    tty: true
+    volumes:
+      - "${IO}:/io:rw"
+      - type: tmpfs
+        target: /tmp
+    ports:
+      # change 127.0.0.1 to the actual wireguard address
+      # or use ssh access with port forwarding (-L 5900:127.0.0.1:5900)
+      - "127.0.0.1:590${VNCNumber}:590${VNCNumber}/tcp"
+      - "127.0.0.1:600${VNCNumber}:600${VNCNumber}/tcp"
+    network_mode: host
