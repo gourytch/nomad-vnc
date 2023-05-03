@@ -4,11 +4,11 @@
 * make (just for convenience)
 
 ## usage:
-* make build -- create image (nomad-vnc)
-* make sh -- start container with interactive bash
-* make run -- start container with TigerVNC
-* make xsh -- execute bash in running container
+* make build -- create the image (nomad-vnc)
+* make sh -- start the container with an interactive shell
+* make run -- start the container with a TigerVNC instance
+* make xsh -- join an already running  container and run an interactive shell
 * make clean -- clean up after work (remove extra docker objects)
 
 ## home storage
-./io -- a directory with dockerized home
+./io -- a directory with a dockerized home
