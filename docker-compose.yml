@@ -6,11 +6,13 @@ services:
     build:
       context: ./nomad-vnc
       dockerfile: Dockerfile
-      args:
+      args: # all envvars can be taken from .env
         - UserName=${UserName}
         - Uid=${Uid}
-        - Gid=${Uid}
+        - Gid=${Gid}
         - VNCNumber=${VNCNumber}
+        - VNCPort=${VNCPort}
+        - VNCPassword="${VNCPassword}"
     user: ${UserName}
     stdin_open: true
     tty: true
@@ -18,9 +20,4 @@ services:
       - "${IO}:/io:rw"
       - type: tmpfs
         target: /tmp
-    ports:
-      # change 127.0.0.1 to the actual wireguard address
-      # or use ssh access with port forwarding (-L 5900:127.0.0.1:5900)
-      - "127.0.0.1:590${VNCNumber}:590${VNCNumber}/tcp"
-      - "127.0.0.1:600${VNCNumber}:600${VNCNumber}/tcp"
-    network_mode: host
+    network_mode: host # docker container shares the host network
