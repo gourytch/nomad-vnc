@@ -25,6 +25,11 @@ sh: ${IO}
 xsh:
 	$(COMPOSER) exec $(IMAGE) /bin/bash --login
 
+up: ${IO}
+	$(COMPOSER) up -d $(IMAGE)
+
+down: clean
+
 ${IO}:
 	mkdir -p ${IO}
 

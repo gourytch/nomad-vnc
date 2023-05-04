@@ -1,7 +1,10 @@
 #! /bin/bash
 set -xe
 cp -Truv ${HOME_SKEL} ${HOME}
-test -e ${HOME}/.env && . ${HOME}/.env
+if [ -e ${HOME}/.env ]; then
+  . ${HOME}/.env
+  export $(sed -e '/^#.*/d' -e 's/=.*//' ${HOME}/.env)
+fi
 
 : ${VNCPort:=$[5900 + ${VNCNumber}]}
 : ${VNCGeometry:=1920x1080}
@@ -10,8 +13,12 @@ test -e ${HOME}/.env && . ${HOME}/.env
 : ${VNCDir:=${HOME}/.vnc}
 : ${VNCAuth:=${VNCDir}/passwd}
 : ${VNC509Key:=${VNCDir}/vnckey-private.pem}
-: ${VNC509Cert:=${VNCDir}/vnkey.pem}
+: ${VNC509Cert:=${VNCDir}/vnckey.pem}
 : ${DISPLAY:=":${VNCNumber}"}
+
+export XDG_RUNTIME_DIR=/run/user/${USER}
+export XAUTHORITY=/tmp/.docker.xauth
+export DISPLAY=":${VNCNumber}"
 
 touch $XAUTHORITY
 rm -rf /tmp/.X11-unix/* || true
@@ -35,8 +42,9 @@ test -e ${VNC509Key} -a -e ${VNC509Cert} \
     -subj "/CN=${VNCAddr}" -addext "subjectAltName=IP:${VNCAddr}"
 
 /usr/bin/vncserver $DISPLAY -geometry ${VNCGeometry} -depth ${VNCDepth} \
-    -localhost no -rfbport ${VNCPort} -rfbauth ${VNCAuth} \
-    -X509Key ${VNC509Key} -X509Cert ${VNC509Cert}
+    -rfbauth ${VNCAuth} \
+    -X509Key ${VNC509Key} -X509Cert ${VNC509Cert} \
+    -rfbport ${VNCPort} -localhost no 
 
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTHORITY nmerge -
 tail -F ${VNCDir}/*.log

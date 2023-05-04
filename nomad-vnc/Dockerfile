@@ -26,6 +26,8 @@ RUN apt-get update \
         ssh \
         mc \
         net-tools \
+        curl \
+        wget \
         sudo \
         tigervnc-standalone-server \
         expect \
@@ -48,12 +50,28 @@ RUN add-apt-repository -y ppa:mozillateam/ppa \
 &&  apt-get update \
 &&  apt-get install -y firefox-esr
 
+# WORKDIR /tmp
+# RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg \
+# &&  install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ \
+# &&  echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] \ 
+#     https://packages.microsoft.com/repos/code stable main" >/etc/apt/sources.list.d/vscode.list \
+# &&  apt-get update \
+# &&  apt-get install -y code \
+# &&  rm packages.microsoft.gpg
+
 # RUN apt-get install -y --no-install-recommends \
 #         cinnamon-desktop-environment
 
-RUN apt-get install -y --no-install-recommends \
-        xfce4 \
-        xfce4-goodies
+RUN apt-get install -y \
+        icewm
+
+# RUN apt-get install -y \
+#         xfce4 \
+#         xfce4-goodies \
+#         icewm \
+#         fluxbox \
+#         wmaker \
+#         jwm
 
 ADD start.sh /
 
@@ -76,8 +94,5 @@ USER ${UserName}
 WORKDIR ${HOME}
 
 ENV USER ${UserName}
-ENV XDG_RUNTIME_DIR /run/user/${UserName}
-ENV XAUTHORITY=/tmp/.docker.xauth
-ENV DISPLAY=":${VNCNumber}"
 
 CMD [ "/start.sh" ]

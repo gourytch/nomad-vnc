@@ -1,0 +1,21 @@
+#! /bin/sh
+
+test x"$SHELL" = x"" && SHELL=/bin/bash
+test x"$1"     = x"" && set -- default
+: ${XSession:=/etc/X11/Xsession "$@"}
+
+if test -r /etc/default/keyboard &&
+   test -x /usr/bin/setxkbmap; then
+  . /etc/default/keyboard
+  /usr/bin/setxkbmap \
+    -model   "${XKBMODEL}" \
+    -layout  "${XKBLAYOUT}" \
+    -variant "${XKBVARIANT}" \
+    "${XKBOPTIONS}"
+fi
+
+tigervncconfig -iconic &
+"$SHELL" -l <<EOF
+exec ${XSession}
+EOF
+tigervncserver -kill $DISPLAY

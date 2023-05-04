@@ -1,4 +1,6 @@
+!.gitignore
 /io
 /env.config
 /.env
-/nomad-vnc/.env
+/**/.env
+
